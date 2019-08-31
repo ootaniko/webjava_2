@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8" />
+<title>CharacterMake!</title>
+</head>
+<body>
+	職業：<span th:text="${job.jobName}"></span>
+	<br>
+	名前：<span th:text="${job.characterName}"></span>
+	<br>
+	<form action="#" th:action="@{/result}" th:object="${message}" method="post">
+        <button type="submit" class="btn btn-default">たたかう</button>
+	</form>
+</body>
+</html>

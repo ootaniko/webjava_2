@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8" />
+<title>CharacterMake!</title>
+</head>
+<body>
+	<h3>
+		キャラ作成
+	</h3>
+	<form action="#" th:action="@{/commandselect}" th:object="${characterForm}" method="post">
+		<div>
+			職業：
+				<input type="radio" th:value="0" th:id="job0" name="job" th:field="*{jobId}">
+				<label th:for="job0">戦士</label>
+				<input type="radio" th:value="1" th:id="job1" name="job" th:field="*{jobId}">
+				<label th:for="job1">魔法使い</label>
+		</div>
+		<div>
+			名前：
+			<input type="text" id="characterName" name="characterName" value="" th:field="*{name}">
+		</div>
+        <button type="submit" class="btn btn-default">次へ</button>
+	</form>
+</body>
+</html>
