@@ -12,4 +12,11 @@ public class Wizard extends Job {
     return getCharacterName() + "は魔法で攻撃した！";
   }
 
+  @Override
+  public String heal() {
+    // TODO 自動生成されたメソッド・スタブ
+    return getCharacterName() + "はまほうで回復した！";
+  }
+
+
 }

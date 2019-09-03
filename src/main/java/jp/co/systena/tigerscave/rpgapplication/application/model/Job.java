@@ -28,8 +28,6 @@ public abstract class Job {
     this.jobName = jobName;
   }
 
-  public abstract String battle();
-
   public String getCharacterName() {
     return characterName;
   }
@@ -37,4 +35,9 @@ public abstract class Job {
   public void setCharacterName(String characterName) {
     this.characterName = characterName;
   }
+
+  public abstract String battle();
+
+  public abstract String heal();
+
 }

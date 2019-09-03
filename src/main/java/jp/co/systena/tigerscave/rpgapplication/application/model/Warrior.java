@@ -12,4 +12,10 @@ public class Warrior extends Job {
     return getCharacterName() + "は剣で攻撃した！";
   }
 
+  @Override
+  public String heal() {
+    // TODO 自動生成されたメソッド・スタブ
+    return getCharacterName() + "はやくそうで回復した！";
+  }
+
 }

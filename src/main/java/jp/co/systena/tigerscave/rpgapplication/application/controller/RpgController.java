@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import jp.co.systena.tigerscave.rpgapplication.application.model.CharacterForm;
+import jp.co.systena.tigerscave.rpgapplication.application.model.CommandForm;
 import jp.co.systena.tigerscave.rpgapplication.application.model.Fighter;
 import jp.co.systena.tigerscave.rpgapplication.application.model.Job;
 import jp.co.systena.tigerscave.rpgapplication.application.model.Warrior;
@@ -29,7 +30,7 @@ public class RpgController {
   }
 
   @RequestMapping(value="/commandselect", method = RequestMethod.GET)          // URLとのマッピング
-  public ModelAndView getcommandselect(ModelAndView mav, @Valid CharacterForm characterForm) {
+  public ModelAndView getcommandselect(ModelAndView mav, @Valid CommandForm commandForm) {
 
     Job job = null;
 
@@ -62,18 +63,31 @@ public class RpgController {
   public ModelAndView getresult(ModelAndView mav) {
 
     Job job = null;
-
     job = (Job)session.getAttribute("job");
-
     mav.addObject("job", job);
+
+    int command = -1;
+    command = (int)session.getAttribute("command");
+
+    String result = "";
+    if(command==0) {
+      result = job.battle();
+    }else if(command==1) {
+      result = job.heal();
+    }
+    mav.addObject("result", result);
 
     mav.setViewName("result");
     return mav;
   }
 
   @RequestMapping(value = "/result", method = RequestMethod.POST) // URLとのマッピング
-  private ModelAndView postresult(ModelAndView mav,
+  private ModelAndView postresult(ModelAndView mav, @Valid CommandForm commandForm,
       BindingResult bindingResult, HttpServletRequest request) {
+
+    int command = commandForm.getCommandId();
+
+    session.setAttribute("command", command);
 
     return new ModelAndView("redirect:/result"); // リダイレクト
   }
