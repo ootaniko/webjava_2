@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import jp.co.systena.tigerscave.rpgapplication.application.model.CharacterForm;
+import jp.co.systena.tigerscave.rpgapplication.application.model.Fighter;
 import jp.co.systena.tigerscave.rpgapplication.application.model.Job;
 import jp.co.systena.tigerscave.rpgapplication.application.model.Warrior;
 import jp.co.systena.tigerscave.rpgapplication.application.model.Wizard;
@@ -50,6 +51,8 @@ public class RpgController {
       job = new Warrior(characterForm.getName());
     }else if(characterForm.getJobId()==1) {
       job = new Wizard(characterForm.getName());
+    }else if(characterForm.getJobId()==2) {
+      job = new Fighter(characterForm.getName());
     }
     session.setAttribute("job", job);
     return new ModelAndView("redirect:/commandselect"); // リダイレクト
