@@ -1,6 +1,6 @@
 package jp.co.systena.tigerscave.rpgapplication.application.model;
 
-public class CharacterForm {
+public class JobForm {
 
   private int jobId;
   private String name;

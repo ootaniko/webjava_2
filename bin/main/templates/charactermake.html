@@ -8,7 +8,7 @@
 	<h3>
 		キャラ作成
 	</h3>
-	<form action="#" th:action="@{/commandselect}" th:object="${characterForm}" method="post">
+	<form action="#" th:action="@{/commandselect}" th:object="${jobForm}" method="post">
 		<div>
 			職業：
 				<input type="radio" th:value="0" th:id="job0" name="job" th:field="*{jobId}">

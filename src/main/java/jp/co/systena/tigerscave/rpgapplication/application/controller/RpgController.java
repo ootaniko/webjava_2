@@ -9,10 +9,10 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
-import jp.co.systena.tigerscave.rpgapplication.application.model.CharacterForm;
 import jp.co.systena.tigerscave.rpgapplication.application.model.CommandForm;
 import jp.co.systena.tigerscave.rpgapplication.application.model.Fighter;
 import jp.co.systena.tigerscave.rpgapplication.application.model.Job;
+import jp.co.systena.tigerscave.rpgapplication.application.model.JobForm;
 import jp.co.systena.tigerscave.rpgapplication.application.model.Warrior;
 import jp.co.systena.tigerscave.rpgapplication.application.model.Wizard;
 
@@ -23,7 +23,7 @@ public class RpgController {
   HttpSession session;  // セッション管理
 
   @RequestMapping(value="/charactermake", method = RequestMethod.GET)          // URLとのマッピング
-  public ModelAndView index(ModelAndView mav, @Valid CharacterForm characterForm) {
+  public ModelAndView index(ModelAndView mav, @Valid JobForm jobForm) {
 
     mav.setViewName("charactermake");
     return mav;
@@ -43,17 +43,17 @@ public class RpgController {
   }
 
   @RequestMapping(value = "/commandselect", method = RequestMethod.POST) // URLとのマッピング
-  private ModelAndView postcommandselect(ModelAndView mav, @Valid CharacterForm characterForm,
+  private ModelAndView postcommandselect(ModelAndView mav, @Valid JobForm jobForm,
       BindingResult bindingResult, HttpServletRequest request) {
 
     Job job = null;
 
-    if(characterForm.getJobId()==0) {
-      job = new Warrior(characterForm.getName());
-    }else if(characterForm.getJobId()==1) {
-      job = new Wizard(characterForm.getName());
-    }else if(characterForm.getJobId()==2) {
-      job = new Fighter(characterForm.getName());
+    if(jobForm.getJobId()==0) {
+      job = new Warrior(jobForm.getName());
+    }else if(jobForm.getJobId()==1) {
+      job = new Wizard(jobForm.getName());
+    }else if(jobForm.getJobId()==2) {
+      job = new Fighter(jobForm.getName());
     }
     session.setAttribute("job", job);
     return new ModelAndView("redirect:/commandselect"); // リダイレクト
