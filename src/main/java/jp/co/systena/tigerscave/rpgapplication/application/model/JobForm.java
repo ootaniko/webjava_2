@@ -4,6 +4,7 @@ public class JobForm {
 
   private int jobId;
   private String name;
+  private boolean goNext;
 
   public int getJobId() {
     return jobId;
@@ -17,6 +18,12 @@ public class JobForm {
   }
   public void setName(String name) {
     this.name = name;
+  }
+  public boolean getGoNext() {
+    return goNext;
+  }
+  public void setGoNext(boolean goNext) {
+    this.goNext = goNext;
   }
 
 }

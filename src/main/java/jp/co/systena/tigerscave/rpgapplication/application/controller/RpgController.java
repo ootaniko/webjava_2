@@ -76,12 +76,15 @@ public class RpgController {
     // ジョブ情報をセッションに保持
     session.setAttribute("jobList", jobList);
 
-    // counterが0ならば再度ジョブ情報の入力を要求する
-    if (counter == 0) {
+    // counterが3未満かつ次キャラ作成がTrueならば再度ジョブ情報の入力を要求する
+    if ((counter < 3)&&(jobForm.getGoNext())) {
       counter++;
       session.setAttribute("counter", counter);
       return new ModelAndView("redirect:/charactermake"); // リダイレクト
     }
+
+    int numOfCharacter = counter;
+    session.setAttribute("numOfCharacter", numOfCharacter);
 
     counter = 0;
     session.setAttribute("counter", counter);
@@ -119,6 +122,7 @@ public class RpgController {
 
     int command = commandForm.getCommandId();
     int counter = (int) session.getAttribute("counter");
+    int numOfCharacter = (int) session.getAttribute("numOfCharacter");
 
     List<Job> jobList = new ArrayList<Job>();
 
@@ -128,8 +132,10 @@ public class RpgController {
 
     session.setAttribute("jobList", jobList);
 
-    // counterが0ならば再度コマンドの入力を要求する
-    if (counter == 0) {
+
+
+    // counterがキャラクター数より小さければ再度コマンドの入力を要求する
+    if (counter < numOfCharacter) {
       counter++;
       session.setAttribute("counter", counter);
       return new ModelAndView("redirect:/commandselect"); // リダイレクト
