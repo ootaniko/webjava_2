@@ -1,5 +1,7 @@
 package jp.co.systena.tigerscave.rpgapplication.application.controller;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
@@ -20,21 +22,25 @@ import jp.co.systena.tigerscave.rpgapplication.application.model.Wizard;
 public class RpgController {
 
   @Autowired
-  HttpSession session;  // セッション管理
+  HttpSession session; // セッション管理
 
-  @RequestMapping(value="/charactermake", method = RequestMethod.GET)          // URLとのマッピング
+  @RequestMapping(value = "/charactermake", method = RequestMethod.GET) // URLとのマッピング
   public ModelAndView index(ModelAndView mav, @Valid JobForm jobForm) {
 
     mav.setViewName("charactermake");
     return mav;
   }
 
-  @RequestMapping(value="/commandselect", method = RequestMethod.GET)          // URLとのマッピング
+  @RequestMapping(value = "/commandselect", method = RequestMethod.GET) // URLとのマッピング
   public ModelAndView getcommandselect(ModelAndView mav, @Valid CommandForm commandForm) {
 
     Job job = null;
+    int counter = (int) session.getAttribute("counter");
 
-    job = (Job)session.getAttribute("job");
+    // ジョブリストから指定の番号の情報を抜き出し、mavに渡す
+    List<Job> jobList = new ArrayList<Job>();
+    jobList = (List<Job>) session.getAttribute("jobList");
+    job = jobList.get(counter);
 
     mav.addObject("job", job);
 
@@ -46,34 +52,60 @@ public class RpgController {
   private ModelAndView postcommandselect(ModelAndView mav, @Valid JobForm jobForm,
       BindingResult bindingResult, HttpServletRequest request) {
 
-    Job job = null;
-
-    if(jobForm.getJobId()==0) {
-      job = new Warrior(jobForm.getName());
-    }else if(jobForm.getJobId()==1) {
-      job = new Wizard(jobForm.getName());
-    }else if(jobForm.getJobId()==2) {
-      job = new Fighter(jobForm.getName());
+    int counter = 0;
+    if (session.getAttribute("counter") != null) {
+      counter = (int) session.getAttribute("counter");
     }
-    session.setAttribute("job", job);
+
+    List<Job> jobList = (List<Job>) session.getAttribute("jobList");
+
+    // セッションにジョブ情報が存在しないときは新しく作る
+    if (jobList == null) {
+      jobList = new ArrayList<Job>();
+    }
+
+    // jobIdに従ってJobのインスタンス化を行う
+    if (jobForm.getJobId() == 0) {
+      jobList.add(new Warrior(jobForm.getName()));
+    } else if (jobForm.getJobId() == 1) {
+      jobList.add(new Wizard(jobForm.getName()));
+    } else if (jobForm.getJobId() == 2) {
+      jobList.add(new Fighter(jobForm.getName()));
+    }
+
+    // ジョブ情報をセッションに保持
+    session.setAttribute("jobList", jobList);
+
+    // counterが0ならば再度ジョブ情報の入力を要求する
+    if (counter == 0) {
+      counter++;
+      session.setAttribute("counter", counter);
+      return new ModelAndView("redirect:/charactermake"); // リダイレクト
+    }
+
+    counter = 0;
+    session.setAttribute("counter", counter);
     return new ModelAndView("redirect:/commandselect"); // リダイレクト
   }
 
-  @RequestMapping(value="/result", method = RequestMethod.GET)          // URLとのマッピング
+  @RequestMapping(value = "/result", method = RequestMethod.GET) // URLとのマッピング
   public ModelAndView getresult(ModelAndView mav) {
 
+    List<Job> jobList = new ArrayList<Job>();
+    jobList = (List<Job>) session.getAttribute("jobList");
+
     Job job = null;
-    job = (Job)session.getAttribute("job");
-    mav.addObject("job", job);
-
-    int command = -1;
-    command = (int)session.getAttribute("command");
-
     String result = "";
-    if(command==0) {
-      result = job.battle();
-    }else if(command==1) {
-      result = job.heal();
+
+    // コマンドに従い各ジョブの行動の結果をresultに追加する
+    for (int i = 0; i < jobList.size(); i++) {
+      job = jobList.get(i);
+      if (job.getCommandId() == 0) {
+        result += job.battle();
+      } else if (job.getCommandId() == 1) {
+        result += job.heal();
+      }
+
     }
     mav.addObject("result", result);
 
@@ -86,9 +118,25 @@ public class RpgController {
       BindingResult bindingResult, HttpServletRequest request) {
 
     int command = commandForm.getCommandId();
+    int counter = (int) session.getAttribute("counter");
 
-    session.setAttribute("command", command);
+    List<Job> jobList = new ArrayList<Job>();
 
+    jobList = (List<Job>) session.getAttribute("jobList");
+
+    jobList.get(counter).setCommandId(command);
+
+    session.setAttribute("jobList", jobList);
+
+    // counterが0ならば再度コマンドの入力を要求する
+    if (counter == 0) {
+      counter++;
+      session.setAttribute("counter", counter);
+      return new ModelAndView("redirect:/commandselect"); // リダイレクト
+    }
+
+    counter = 0;
+    session.setAttribute("counter", counter);
     return new ModelAndView("redirect:/result"); // リダイレクト
   }
 
