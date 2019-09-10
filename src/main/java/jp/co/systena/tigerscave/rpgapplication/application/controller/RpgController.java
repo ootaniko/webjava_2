@@ -94,23 +94,42 @@ public class RpgController {
   @RequestMapping(value = "/result", method = RequestMethod.GET) // URLとのマッピング
   public ModelAndView getresult(ModelAndView mav) {
 
+    // 作成したジョブのリスト
     List<Job> jobList = new ArrayList<Job>();
     jobList = (List<Job>) session.getAttribute("jobList");
 
+    // 敵の体力
+    int life = 100;
+    if (session.getAttribute("life") != null) {
+      life = (int) session.getAttribute("life");
+    }
+
     Job job = null;
     String result = "";
+    int damage = 0;
 
     // コマンドに従い各ジョブの行動の結果をresultに追加する
     for (int i = 0; i < jobList.size(); i++) {
       job = jobList.get(i);
       if (job.getCommandId() == 0) {
         result += job.battle();
+        // 攻撃を行ったらダメージを10加算
+        damage += 10;
       } else if (job.getCommandId() == 1) {
         result += job.heal();
       }
-
     }
+
+    // ダメージの総量だけ敵の体力を減少する
+    if(life >= damage) {
+      life -= damage;
+    } else {
+      life = 0;
+    }
+
     mav.addObject("result", result);
+    mav.addObject("life", life);
+    mav.addObject("damage", damage);
 
     mav.setViewName("result");
     return mav;
@@ -125,25 +144,22 @@ public class RpgController {
     int numOfCharacter = (int) session.getAttribute("numOfCharacter");
 
     List<Job> jobList = new ArrayList<Job>();
-
     jobList = (List<Job>) session.getAttribute("jobList");
 
     jobList.get(counter).setCommandId(command);
-
     session.setAttribute("jobList", jobList);
 
-
-
-    // counterがキャラクター数より小さければ再度コマンドの入力を要求する
-    if (counter < numOfCharacter) {
-      counter++;
+    // counterがキャラクター数より大きければresultを表示する
+    if (counter >= numOfCharacter) {
+      counter = 0;
       session.setAttribute("counter", counter);
-      return new ModelAndView("redirect:/commandselect"); // リダイレクト
+      return new ModelAndView("redirect:/result"); // リダイレクト
     }
 
-    counter = 0;
+    // counterを1進め、再度コマンドの入力を要求する
+    counter ++;
     session.setAttribute("counter", counter);
-    return new ModelAndView("redirect:/result"); // リダイレクト
+    return new ModelAndView("redirect:/commandselect"); // リダイレクト
   }
 
 
