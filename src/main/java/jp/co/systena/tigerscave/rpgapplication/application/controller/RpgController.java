@@ -64,27 +64,31 @@ public class RpgController {
       jobList = new ArrayList<Job>();
     }
 
-    // jobIdに従ってJobのインスタンス化を行う
-    if (jobForm.getJobId() == 0) {
-      jobList.add(new Warrior(jobForm.getName()));
-    } else if (jobForm.getJobId() == 1) {
-      jobList.add(new Wizard(jobForm.getName()));
-    } else if (jobForm.getJobId() == 2) {
-      jobList.add(new Fighter(jobForm.getName()));
+    // jobFormに値が渡っているときのみ実行する
+    if (jobForm != null) {
+      // jobIdに従ってJobのインスタンス化を行う
+      if (jobForm.getJobId() == 0) {
+        jobList.add(new Warrior(jobForm.getName()));
+      } else if (jobForm.getJobId() == 1) {
+        jobList.add(new Wizard(jobForm.getName()));
+      } else if (jobForm.getJobId() == 2) {
+        jobList.add(new Fighter(jobForm.getName()));
+      }
+
+      // ジョブ情報をセッションに保持
+      session.setAttribute("jobList", jobList);
+
+      // counterが3未満かつ次キャラ作成がTrueならば再度ジョブ情報の入力を要求する
+      if ((counter < 3) && (jobForm.getGoNext())) {
+        counter++;
+        session.setAttribute("counter", counter);
+        return new ModelAndView("redirect:/charactermake"); // リダイレクト
+      }
+
+      // counterの値をキャラクターの人数として保存する
+      int numOfCharacter = counter;
+      session.setAttribute("numOfCharacter", numOfCharacter);
     }
-
-    // ジョブ情報をセッションに保持
-    session.setAttribute("jobList", jobList);
-
-    // counterが3未満かつ次キャラ作成がTrueならば再度ジョブ情報の入力を要求する
-    if ((counter < 3)&&(jobForm.getGoNext())) {
-      counter++;
-      session.setAttribute("counter", counter);
-      return new ModelAndView("redirect:/charactermake"); // リダイレクト
-    }
-
-    int numOfCharacter = counter;
-    session.setAttribute("numOfCharacter", numOfCharacter);
 
     counter = 0;
     session.setAttribute("counter", counter);
@@ -121,7 +125,7 @@ public class RpgController {
     }
 
     // ダメージの総量だけ敵の体力を減少する
-    if(life >= damage) {
+    if (life >= damage) {
       life -= damage;
     } else {
       life = 0;
@@ -130,6 +134,8 @@ public class RpgController {
     mav.addObject("result", result);
     mav.addObject("life", life);
     mav.addObject("damage", damage);
+
+    session.setAttribute("life", life);
 
     mav.setViewName("result");
     return mav;
@@ -151,13 +157,12 @@ public class RpgController {
 
     // counterがキャラクター数より大きければresultを表示する
     if (counter >= numOfCharacter) {
-      counter = 0;
       session.setAttribute("counter", counter);
       return new ModelAndView("redirect:/result"); // リダイレクト
     }
 
     // counterを1進め、再度コマンドの入力を要求する
-    counter ++;
+    counter++;
     session.setAttribute("counter", counter);
     return new ModelAndView("redirect:/commandselect"); // リダイレクト
   }

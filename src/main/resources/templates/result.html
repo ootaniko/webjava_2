@@ -8,5 +8,12 @@
 	<div th:text="${result}"></div>
 	<div th:text="敵に + ${damage} + のダメージ！"></div>
 	<div th:text="敵の残り体力： + ${life}"></div>
+
+	<!-- ここから条件で表示/非表示切り替え -->
+	<div th:if="${life > 0}">
+		<form action="#" th:action="@{/commandselect}" method="post">
+			<button type="submit" class	="btn btn-default" name="commandId">次のターンへ</button>
+	    </form>
+	</div>
 </body>
 </html>
